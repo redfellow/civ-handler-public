@@ -5,7 +5,7 @@ const app = express()
 app.use(bodyParser.json())
 
 // port to bind the server to
-const APP_PORT = 8080
+const APP_PORT = 80
 
 // Displaying your bot messages with certain nick/color
 const BOT_NAME = "Dingding"
@@ -29,27 +29,44 @@ const HOOKS = [{
 
 
 app.post('/civ/new_turn', function(req, res) {
-	console.log('[✔] civ-handler >> app.post > POST received', req.isJson, req.body)
+	console.log('[✔] civ-handler >> app.post > POST received', new Date(), req.body)
 	const vars = getVars(req.body);
 
 
 	if (vars.ok) {
-		console.log('[✔] civ-handler >> app.post > Sending discord webHook message', vars.msgTitle, vars.msgBody)
+		console.log('[✔] civ-handler >> app.post > Attempting to send discord webHook message', new Date(), vars.msgTitle, vars.msgBody)
 		const msg = new webhook.MessageBuilder()
 		msg.setName(BOT_NAME)
 		msg.setColor(BOT_MSG_COLOR)
 		msg.setText(vars.msgTitle)
 		msg.addField(vars.msgBody)
 		msg.setTime()
-		vars.hook.send(msg)
-		res.status(200).send({
-			"[✔] civ-handler >> request passed to discord successfully": vars
-		})
+
+		if (SENT_MESSAGES[vars.hash] !== true) {
+			SENT_MESSAGES[vars.hash] = true;
+			vars.hook.send(msg)
+			res.status(200).send({
+				timestamp: new Date(),
+				result: "[✔] civ-handler >> request passed to discord successfully",
+				vars: vars
+			})
+		}
+		else {
+			const warning = "[✔] civ-handler >> skipped duplicate request to discord";
+			console.warn(warning)
+			res.status(200).send({
+				timestamp: new Date(),
+				result: warning,
+				vars: vars
+			})
+		}
 	}
 	else {
 		console.warn(`[⚠] civ-handler >> app.post > could not trigger the webhook`)
 		res.status(500).send({
-			"[⚠] civ-handler >> request failed": vars
+			timestamp: new Date(),
+			result: "[⚠] civ-handler >> request failed",
+			vars: vars
 		})
 	}
 
@@ -73,12 +90,13 @@ function getVars(json) {
 
 	if ("hook" in vars === false) {
 		var error = new Error(`[⚠] civ-handler >> getVars > "${vars.game}" couldn't be matched to HOOKS.`)
-		console.log(error.stack)
+		console.log("timestamp:" + new Date(), error.stack)
 		vars.ok = false;
 	} 
 	else {
 		vars.msgTitle = `Hey ${vars.player}, it's your turn to play!`
 		vars.msgBody =  `Game: ${vars.game}, turn #${vars.turn}`
+		vars.hash = 
 		vars.ok = true;
 	}
 
