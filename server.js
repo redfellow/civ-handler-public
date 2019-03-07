@@ -96,7 +96,8 @@ function getVars(json) {
 	else {
 		vars.msgTitle = `Hey ${vars.player}, it's your turn to play!`
 		vars.msgBody =  `Game: ${vars.game}, turn #${vars.turn}`
-		vars.hash = 
+		// todo
+		vars.hash = json.value1+json.value2+json.value3
 		vars.ok = true;
 	}
 
