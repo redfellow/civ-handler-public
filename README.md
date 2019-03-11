@@ -1,5 +1,5 @@
 # civ-handler
-Handles webhook messages from Civ 6 and sends them to Discord
+Handles webhook messages from Civ 6 and sends them to Discord. Civ VI sends three values and you can only set a single endpoint to push the turn notifications in a Play By Cloud game. This app sits between Discord and Civ and redirects the POSTed messages to different Discord Webhooks based on partially matching the game name to a webhook. It also prevents the same turn notification from triggering multiple times.
 
 ## Install
 Clone the repo and run `npm install`
