@@ -11,3 +11,8 @@ Note: From personal testing it would appear URLs with port number (eg `:8080`) j
 
 ## Run
 Run the script with `node server.js`
+
+## Troubleshooting
+Paradox has not stated what kind of servers work and what don't. From my testing, port number or https in the url doesn't work. I'm using something like http://www.mydomain.com/civ/new_turn and it worked after I started a new game with said hook enabled for every turn. 
+
+Don't use hooks if you have people playing with MacOs though, their game will crash after each turn. Aspyr knows about the bug, but hasn't patched it for a year now (and counting).
