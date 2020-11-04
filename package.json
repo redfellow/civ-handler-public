@@ -3,9 +3,12 @@
   "main": "server.js",
   "dependencies": {
     "body-parser": "^1.18.3",
-    "express": "^4.10.8",
+    "ejs": "^3.1.5",
+    "express": "^4.17.1",
+    "fs": "0.0.1-security",
     "json-middleware": "^1.0.2",
-    "npm": "^6.8.0",
+    "moment": "^2.27.0",
+    "npm": "^6.14.8",
     "webhook-discord": "^3.1.2"
   }
 }

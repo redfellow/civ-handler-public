@@ -1,0 +1,225 @@
+<!doctype html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Civilization 6 - Play by Cloud Webhook logs</title>
+
+    <link href="https://unpkg.com/tabulator-tables@4.8.4/dist/css/tabulator_midnight.min.css" rel="stylesheet">
+    <script type="text/javascript" src="https://unpkg.com/tabulator-tables@4.8.4/dist/js/tabulator.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/moment.min.js"
+        integrity="sha512-rmZcZsyhe0/MAjquhTgiUcb4d9knaFc7b5xAfju483gbEXTkeJRUMIPk6s3ySZMYUHEcjKbjLjyddGWMrNEvZg=="
+        crossorigin="anonymous"></script>
+    <style>
+        @import 'https://fonts.googleapis.com/css?family=Open+Sans';
+
+        html {
+            font-size: 10px;
+            background: radial-gradient(circle at top, #333 , #000);
+            color: #f5f5f5;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+            min-height: 100vh;
+        }
+
+        body {
+            line-height: 2rem;
+            font-size: 1.6rem;
+            max-width: 1440px;
+            padding: 3.5rem;
+            margin: 0 auto;
+        }
+
+        h1 {
+            margin-top: 0;
+            margin-bottom: 4rem;
+            color: #bf4d3b;
+            font-size: 1.45em;
+            text-align: center;
+            font-weight: 800;
+        }
+
+        h2 {
+            font-size: 1.2em;
+            font-weight: 300;
+            margin-top: 0;
+            margin-bottom: 0.5rem;
+        }
+
+        * {
+            text-shadow: 0 1px 0 rgba(0, 0, 0, .5);
+        }
+
+        .tabulator-table {
+            min-width: 100%;
+        }
+
+        .tabulator-header {
+            margin-bottom: 1rem;
+            border-radius: 3px;
+            border: 1px solid #00000040 !important;
+            font-weight: 500 !important;
+
+        }
+
+        .tabulator-table {
+            background: none !important;
+        }
+
+        .tabulator-tableHolder {
+            border-radius: 3px;
+            border: 1px solid #00000040 !important;
+        }
+
+        .tabulator-row {
+            background-color: rgba(30,30,34,.85);
+        }
+
+        .tabulator-row:nth-child(2n) {
+            background-color: rgba(43,43,49,.85);
+        }
+
+        .tabulator-headers .tabulator-col-title {            
+            padding: 1rem;
+            text-transform: capitalize;
+        }
+
+        .tabulator-header .tabulator-col {
+            background: rgba(61, 55, 55, .85) !important;
+        }
+
+        .tabulator-col,
+        .tabulator-cell {
+            color: rgba(255,255,255,0.90) !important;
+            border-color: #000 !important;
+            font-size: 0.9em !important;
+        }
+
+        .tabulator-cell {
+            border-color: #000 !important;
+            font-size: 1.1em;
+            font-weight: 400 !important;
+            padding: 0.5rem 2rem !important;
+        }
+
+        .tabulator {
+            box-shadow: 3px 6px 16px #00000030;
+            background: none;
+            border: none;
+            margin: 0 0 2rem 0;
+        }
+
+        .tabulator-row.tabulator-selectable:hover {
+            background-color: #334;
+            cursor: pointer;
+        }
+    </style>
+
+</head>
+
+<body>
+    <h1>Civilization 6 - Play by Cloud Webhook logs</h1>
+
+    <h2>Handled events</h2>
+
+    <table id="logTable">
+        <thead>
+            <tr>
+                <th>Epoch</th>
+                <th>Game</th>
+                <th>Turn</th>
+                <th>Player</th>
+                <th>IP</th>
+                <th>ID</th>
+            </tr>
+        </thead>
+
+        <% Object.keys(SENT_MESSAGES).forEach(function(key) { %>
+        <tr>
+            <td> <%= SENT_MESSAGES[key].epoch %> </td>
+            <td> <%= SENT_MESSAGES[key].game %> </td>
+            <td> <%= SENT_MESSAGES[key].turn %> </td>
+            <td> <%= SENT_MESSAGES[key].playerRaw %> </td>
+            <td> <%= SENT_MESSAGES[key].ip %> </td>
+            <td> <%= SENT_MESSAGES[key].hash %> </td>
+        </tr>
+        <% }) %>
+    </table>
+
+    <h2>Errors</h2>
+
+    <table id="errorTable">
+        <thead>
+            <tr>
+                <th>Epoch</th>
+                <th>ID</th>
+                <th>Error</th>
+            </tr>
+        </thead>
+
+        <% Object.keys(ERRORS).forEach(function(key) { %>
+        <tr>
+            <td> <%= ERRORS[key].epoch %> </td>
+            <td> <%= ERRORS[key].hash %> </td>
+            <td> <%= ERRORS[key].errorMsg %> </td>
+        </tr>
+        <% }) %>
+    </table>
+
+    <script>
+        requestAnimationFrame(function() {
+            new Tabulator("#logTable", {
+                layout: "fitDataStretch",
+                columnMinWidth: 185,
+                autoColumns: true,
+                autoColumnsDefinitions: [{ 
+                    field: "epoch", 
+                    title: "Time",
+                    formatter: "datetime", 
+                    formatterParams: {
+                        inputFormat: "x",
+                        outputFormat: "DD.MM.YYYY HH:mm:ss",
+                    }
+                },{ 
+                    field: "ip", 
+                    title: "IP Address"
+                },{ 
+                    field: "id", 
+                    title: "Event ID"
+                }],
+                initialSort: [{ 
+                    column: "epoch", 
+                    dir: "desc" 
+                }]
+            });
+        });
+        requestAnimationFrame(function() {
+            new Tabulator("#errorTable", {
+                layout: "fitDataStretch",
+                columnMinWidth: 185,
+                autoColumns: true,
+                autoColumnsDefinitions: [{ 
+                    field: "epoch", 
+                    title: "Time",
+                    formatter: "datetime", 
+                    formatterParams: {
+                        inputFormat: "x",
+                        outputFormat: "DD.MM.YYYY HH:mm:ss",
+                    }
+                },{ 
+                    field: "id", 
+                    title: "Event ID"
+                },{ 
+                    field: "error", 
+                    title: "Error message"
+                }],
+                initialSort: [{ 
+                    column: "epoch", 
+                    dir: "desc" 
+                }]
+            });
+        });
+    </script>
+</body>
+
+</html>
