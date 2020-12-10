@@ -3,7 +3,7 @@ Handles webhook messages from Civ 6 and sends them to Discord. Civ VI sends thre
 
 Offers a log.html to view sent events and to display errors such as duplicate events.
 
-# known limitations: 
+## known limitations
 * Any MacOS user in a game with a Webhook enabled will have his/her client crash at "end turn" without a notification being sent. Aspyr has had this bug on "known bugs" page for 1.5 years at the time of updating this readme. https://support.aspyr.com/hc/en-us/articles/216979606-Civilization-VI-Mac-Known-Issues
 * A Multiplayer game converted to a Play By Cloud game won't trigger Webhooks
 
